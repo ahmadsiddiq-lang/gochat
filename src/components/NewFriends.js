@@ -11,7 +11,7 @@ import {
   Title,
 } from 'native-base';
 
-class Chat extends Component {
+class NewFriends extends Component {
   gotoHome = () => {
     this.props.navigation.navigate('Home');
   };
@@ -27,7 +27,7 @@ class Chat extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Chat</Title>
+            <Title>NewFriends</Title>
           </Body>
           <Right>
             <Button transparent>
@@ -40,4 +40,4 @@ class Chat extends Component {
   }
 }
 
-export default Chat;
+export default NewFriends;
