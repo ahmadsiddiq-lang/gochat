@@ -10,6 +10,7 @@ import {
   Right,
   Thumbnail,
   Text,
+  Button,
   Icon,
   Fab,
 } from 'native-base';
