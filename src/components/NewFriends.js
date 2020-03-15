@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
 import {
   Container,
   Header,
@@ -32,14 +33,19 @@ class NewFriends extends Component {
       app
         .firestore()
         .collection('users')
-        .where('username', '==', this.state.usersSearch)
+        // .where('username', '==', this.state.usersSearch)
         .onSnapshot(users => {
           let dataUsers = [];
           users.forEach(doc => {
             dataUsers.push({...doc.data(), index: doc.id});
           });
+          const text = this.state.usersSearch.trim().toLowerCase();
+          const data = dataUsers.filter(l => {
+            return l.username.toLowerCase().match(text);
+          });
+          console.log(data);
           this.setState({
-            users: dataUsers,
+            users: data,
           });
         });
     }
@@ -90,14 +96,14 @@ class NewFriends extends Component {
           style={{backgroundColor: '#05e3fc'}}>
           <Item>
             <Button onPress={() => this.gotoHome()} transparent>
-              <Icon name="arrow-back" />
+              <Icon style={style.icon} name="arrow-back" />
             </Button>
             <Input
               placeholder="Search"
               onChangeText={usersSearch => this.setState({usersSearch})}
             />
             <Button onPress={() => this.search()} transparent>
-              <Icon name="ios-search" />
+              <Icon style={style.icon} name="ios-search" />
             </Button>
           </Item>
           <Button transparent>
@@ -120,9 +126,10 @@ class NewFriends extends Component {
                   </Body>
                   <Right>
                     <Button
+                      style={style.BtnAdd}
                       onPress={() => this.addFriend(users.email)}
                       transparent>
-                      <Icon name="person-add" />
+                      <Icon style={style.icon} name="person-add" />
                     </Button>
                   </Right>
                 </ListItem>
@@ -134,5 +141,14 @@ class NewFriends extends Component {
     );
   }
 }
+
+const style = StyleSheet.create({
+  icon: {
+    color: '#05e3fc',
+  },
+  BtnAdd: {
+    height: 25,
+  },
+});
 
 export default NewFriends;
