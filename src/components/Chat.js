@@ -12,27 +12,68 @@ import {
   Title,
 } from 'native-base';
 import {GiftedChat} from 'react-native-gifted-chat';
+import app from '../config/firebase';
+import firebase from 'firebase';
 
 class Chat extends Component {
   state = {
     messages: [],
+    dataFriend: [],
+    dataUser: [],
+  };
+
+  sendMessage = text => {
+    // console.log(text)
+    app
+      .firestore()
+      .collection('chat')
+      .add({
+        chat: text,
+        createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+        email: this.state.dataFriend.email,
+        name: this.state.dataFriend.usernameA,
+        sendto: this.state.dataFriend.friend,
+      });
+  };
+
+  getChat = () => {
+    app
+      .firestore()
+      .collection('chat')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(async chat => {
+        const dataChat = [];
+        await chat.forEach(doc => {
+          if (
+            (doc.data().email === this.state.dataFriend.email &&
+              doc.data().sendto === this.state.dataFriend.friend) ||
+            (doc.data().email === this.state.dataFriend.friend &&
+              doc.data().sendto === this.state.dataFriend.email)
+          ) {
+            dataChat.push({
+              _id: Math.random(),
+              text: doc.data().chat,
+              createdAt: new Date(doc.data().createdAt.toDate()),
+              user: {
+                _id: doc.data().email === this.state.dataFriend.email ? 1 : 2,
+                name: doc.data().name,
+              },
+            });
+          }
+        });
+        this.setState({
+          messages: dataChat,
+        });
+      });
   };
 
   componentDidMount() {
     this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-      ],
+      dataFriend: this.props.route.params,
     });
+    setTimeout(() => {
+      this.getChat();
+    }, 1000);
   }
 
   onSend(messages = []) {
@@ -58,14 +99,14 @@ class Chat extends Component {
             <Title>Chat</Title>
           </Body>
           <Right>
-            <Button transparent>
+            <Button onPress={() => this.getChat()} transparent>
               <Icon name="more" />
             </Button>
           </Right>
         </Header>
         <GiftedChat
           messages={this.state.messages}
-          onSend={messages => this.onSend(messages)}
+          onSend={messages => this.sendMessage(messages[0].text)}
           user={{
             _id: 1,
           }}

@@ -13,7 +13,7 @@ const Stack = createStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="NewFriends" headerMode="none">
+      <Stack.Navigator initialRouteName="Home" headerMode="none">
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="ListChat" component={ListChat} />
         <Stack.Screen name="Register" component={Register} />

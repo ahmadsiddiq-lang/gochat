@@ -41,8 +41,8 @@ class ListChat extends Component {
       });
   };
 
-  gotoChat = email => {
-    this.props.props.navigation.navigate('Chat', email);
+  gotoChat = data => {
+    this.props.props.navigation.navigate('Chat', data);
   };
   NewFriends = () => {
     this.props.props.navigation.navigate('NewFriends');
@@ -59,12 +59,12 @@ class ListChat extends Component {
           {this.state.dataFriends.map(friends => {
             return (
               <List key={friends.friend}>
-                <ListItem onPress={() => this.gotoChat(friends.friend)} avatar>
+                <ListItem onPress={() => this.gotoChat(friends)} avatar>
                   <Left>
                     <Thumbnail source={require('../asset/profile.png')} />
                   </Left>
                   <Body>
-                    <Text>{friends.username}</Text>
+                    <Text>{friends.usernameB}</Text>
                     <Text note>
                       Doing what you like will always keep you happy . .
                     </Text>
