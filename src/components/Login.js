@@ -7,9 +7,11 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  StatusBar,
+  TouchableHighlight,
 } from 'react-native';
 import {Button} from 'native-base';
-// import app from '../config/firebase';
+import app from '../config/firebase';
 import firebase from 'firebase';
 
 class Register extends Component {
@@ -19,6 +21,7 @@ class Register extends Component {
       email: '',
       password: '',
       loading: 0,
+      user: '',
     };
   }
   login = (email, password) => {
@@ -28,11 +31,37 @@ class Register extends Component {
         .signInWithEmailAndPassword(email, password)
         .then(user => {
           this.props.navigation.navigate('Home');
-        });
+          this.setState({loading: 0});
+        })
+        .catch(err => console.log(err));
       this.setState({loading: 1});
+      this.clearForm();
     } else {
       Alert.alert('Form Empty !');
     }
+  };
+  clearForm = () => {
+    this.setState({
+      email: '',
+      password: '',
+    });
+  };
+  getUser = () => {
+    app.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({
+          user: user,
+        });
+        this.props.navigation.navigate('Home');
+      }
+    });
+  };
+  gotoRegister = () => {
+    this.props.navigation.navigate('Register');
+  };
+
+  componentDidMount = () => {
+    this.getUser();
   };
   render() {
     return (
@@ -47,17 +76,22 @@ class Register extends Component {
             zIndex: 1,
           }}
         />
+        <StatusBar backgroundColor="#05e3fc" barStyle="light-content" />
+        <Text style={style.TitleLogin}>GoChat</Text>
         <View style={style.Content}>
           <View style={style.FormBox}>
             <TextInput
+              value={this.state.email}
               autoCapitalize="none"
               placeholder="Email"
               onChangeText={email => this.setState({email})}
               style={style.Form}
             />
             <TextInput
+              value={this.state.password}
               autoCapitalize="none"
               placeholder="Password"
+              secureTextEntry={true}
               onChangeText={password => this.setState({password})}
               style={style.Form}
             />
@@ -68,6 +102,9 @@ class Register extends Component {
             <Text style={style.TextRegister}>Login</Text>
           </Button>
         </View>
+        <TouchableHighlight onPress={() => this.gotoRegister()}>
+          <Text style={style.backtologin}>Register</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -99,9 +136,18 @@ const style = StyleSheet.create({
   },
   TextRegister: {
     color: 'white',
-    fontSize: 17,
+    fontSize: 25,
     fontWeight: 'bold',
     marginLeft: '40%',
+  },
+  TitleLogin: {
+    fontSize: 50,
+    top: 100,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  backtologin: {
+    marginTop: 40,
   },
 });
 

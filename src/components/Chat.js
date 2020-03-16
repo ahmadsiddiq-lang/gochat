@@ -11,6 +11,7 @@ import {
   Icon,
   Title,
 } from 'native-base';
+import {Modal, Text, TouchableHighlight, View, StyleSheet} from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 import app from '../config/firebase';
 import firebase from 'firebase';
@@ -20,6 +21,7 @@ class Chat extends Component {
     messages: [],
     dataFriend: [],
     dataUser: [],
+    modalVisible: false,
   };
 
   sendMessage = text => {
@@ -84,6 +86,15 @@ class Chat extends Component {
   gotoHome = () => {
     this.props.navigation.navigate('Home');
   };
+
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+  gotoProfile = data => {
+    // console.log(data)
+    this.setState({modalVisible: false});
+    this.props.navigation.navigate('Profile', data);
+  };
   render() {
     return (
       <Container>
@@ -99,7 +110,11 @@ class Chat extends Component {
             <Title>Chat</Title>
           </Body>
           <Right>
-            <Button onPress={() => this.getChat()} transparent>
+            <Button
+              onPress={() => {
+                this.setModalVisible(true);
+              }}
+              transparent>
               <Icon name="more" />
             </Button>
           </Right>
@@ -111,9 +126,58 @@ class Chat extends Component {
             _id: 1,
           }}
         />
+        <View style={{marginTop: 22}}>
+          <Modal
+            style={style.Modal}
+            animationType="fade"
+            transparent={true}
+            visible={this.state.modalVisible}>
+            <View style={style.BoxModal}>
+              <View>
+                <Text
+                  onPress={() => this.gotoProfile(this.state.dataFriend)}
+                  style={style.Text}>
+                  Profile
+                </Text>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}>
+                  <Text style={style.Text}>Cencel</Text>
+                </TouchableHighlight>
+                <Text style={style.Text}>Logout</Text>
+              </View>
+            </View>
+          </Modal>
+        </View>
       </Container>
     );
   }
 }
+
+const style = StyleSheet.create({
+  Modal: {
+    alignContent: 'flex-end',
+  },
+  BoxModal: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    position: 'absolute',
+    right: 5,
+    top: 5,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 10,
+  },
+  Text: {
+    padding: 5,
+  },
+});
 
 export default Chat;

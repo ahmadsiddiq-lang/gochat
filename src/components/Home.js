@@ -1,15 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
 import {Container, Header, Body, Right, Button, Icon, Title} from 'native-base';
-import {
-  Modal,
-  Text,
-  TouchableHighlight,
-  View,
-  Alert,
-  StyleSheet,
-} from 'react-native';
+import {Modal, Text, TouchableHighlight, View, StyleSheet} from 'react-native';
 import ListChat from './ListChat';
+import firebase from 'firebase';
+
 class Home extends Component {
   state = {
     modalVisible: false,
@@ -21,6 +16,21 @@ class Home extends Component {
   gotoMyprofile = () => {
     this.setState({modalVisible: false});
     this.props.navigation.navigate('MyProfile');
+  };
+  gotoLogin = () => {
+    this.props.navigation.navigate('Login');
+  };
+  logOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(function() {
+        // Sign-out successful.
+      })
+      .catch(function(error) {
+        // An error happened.
+      });
+    this.gotoLogin();
   };
   render() {
     return (
@@ -54,7 +64,7 @@ class Home extends Component {
             <View style={style.BoxModal}>
               <View>
                 <Text onPress={() => this.gotoMyprofile()} style={style.Text}>
-                  Profile
+                  My Profile
                 </Text>
                 <TouchableHighlight
                   onPress={() => {
@@ -62,7 +72,9 @@ class Home extends Component {
                   }}>
                   <Text style={style.Text}>Cencel</Text>
                 </TouchableHighlight>
-                <Text style={style.Text}>Logout</Text>
+                <Text onPress={() => this.logOut()} style={style.Text}>
+                  Logout
+                </Text>
               </View>
             </View>
           </Modal>

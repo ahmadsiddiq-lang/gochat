@@ -8,6 +8,7 @@ class MyProfile extends Component {
     super();
     this.state = {
       dataUser: [],
+      user: '',
     };
   }
 
@@ -17,7 +18,7 @@ class MyProfile extends Component {
       .collection('users')
       .onSnapshot(user => {
         user.forEach(doc => {
-          if (doc.data().email === 'ahmadsaja96.as@gmail.com') {
+          if (doc.data().email === this.state.user.email) {
             this.setState({
               dataUser: doc.data(),
             });
@@ -25,13 +26,23 @@ class MyProfile extends Component {
         });
       });
   };
+  getUser = () => {
+    app.auth().onAuthStateChanged(user => {
+      this.setState({
+        user: user,
+      });
+    });
+  };
 
   gotoHome = () => {
     this.props.navigation.navigate('Home');
   };
 
   componentDidMount = () => {
-    this.getProfile();
+    this.getUser();
+    setTimeout(() => {
+      this.getProfile();
+    }, 1000);
   };
   render() {
     const data = this.state.dataUser;
@@ -39,11 +50,14 @@ class MyProfile extends Component {
       <View style={style.Container}>
         <StatusBar backgroundColor="#636363" barStyle="light-content" />
         <View style={style.Banner}>
-          <Image style={style.imgBanner} />
+          <Image
+            source={require('../asset/Desert.png')}
+            style={style.imgBanner}
+          />
         </View>
         <View style={style.Content}>
           <View style={style.BoxImg}>
-            <Image source={require('../asset/profile.png')} style={style.Img} />
+            <Image source={require('../asset/Ahmad.png')} style={style.Img} />
           </View>
         </View>
         <Text style={style.Name}>{data.username}</Text>
@@ -87,11 +101,16 @@ const style = StyleSheet.create({
     height: '30%',
     backgroundColor: '#636363',
   },
+  imgBanner: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.5,
+  },
   Content: {
     top: 120,
     width: '85%',
     backgroundColor: 'white',
-    height: '83%',
+    height: '75%',
     position: 'absolute',
     borderRadius: 10,
     alignItems: 'center',
@@ -119,44 +138,47 @@ const style = StyleSheet.create({
   Img: {
     maxWidth: 140,
     maxHeight: 140,
-    top: 6,
     opacity: 1,
+    borderRadius: 70,
+    top: 7,
   },
   Name: {
-    fontSize: 40,
-    top: -70,
+    fontWeight: 'bold',
+    fontSize: 30,
+    top: 10,
+    color: '#636363',
   },
   boxIcon: {
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: 50,
   },
   iconfb: {
     color: '#57ffff',
-    fontSize: 60,
+    fontSize: 50,
   },
   icontw: {
     color: '#57ffff',
-    fontSize: 60,
+    fontSize: 50,
     marginLeft: 50,
   },
   BoxFollow: {
     flexDirection: 'row',
-    marginTop: 100,
+    marginTop: 10,
   },
   flwing: {
     left: -5,
-    fontSize: 25,
+    fontSize: 18,
     color: '#636363',
   },
   flwer: {
     left: -5,
-    fontSize: 25,
+    fontSize: 18,
     color: '#636363',
     marginLeft: 100,
   },
   BoxFol: {
     flexDirection: 'row',
-    marginTop: 30,
+    marginTop: 10,
     width: 220,
   },
   folwing: {
@@ -178,16 +200,18 @@ const style = StyleSheet.create({
     position: 'absolute',
   },
   boxfollwer: {
+    width: 60,
     maxWidth: 150,
     maxHeight: 200,
     right: 0,
     position: 'absolute',
   },
   text: {
-    top: -60,
+    top: 10,
+    color: '#636363',
   },
   buttonUpdate: {
-    top: 120,
+    top: 50,
     width: 150,
     alignItems: 'center',
     borderRadius: 10,
@@ -200,7 +224,7 @@ const style = StyleSheet.create({
     left: '130%',
   },
   buttonCencel: {
-    top: 150,
+    top: 60,
     width: 150,
     alignItems: 'center',
     borderRadius: 10,

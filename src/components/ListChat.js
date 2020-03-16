@@ -21,6 +21,8 @@ class ListChat extends Component {
     this.state = {
       active: false,
       dataFriends: [],
+      user: '',
+      sendData: '',
     };
   }
 
@@ -28,12 +30,15 @@ class ListChat extends Component {
     app
       .firestore()
       .collection('friends')
-      .where('email', '==', 'ahmadsaja96.as@gmail.com')
+      .where('email', '==', this.state.user.email)
       .where('status', '==', true)
       .onSnapshot(friens => {
         let dataFriends = [];
         friens.forEach(doc => {
           dataFriends.push({...doc.data(), index: doc.id});
+          this.setState({
+            sendData: doc.data(),
+          });
         });
         this.setState({
           dataFriends: dataFriends,
@@ -41,15 +46,27 @@ class ListChat extends Component {
       });
   };
 
+  getUser = () => {
+    app.auth().onAuthStateChanged(user => {
+      this.setState({
+        user: user,
+      });
+    });
+  };
+
   gotoChat = data => {
     this.props.props.navigation.navigate('Chat', data);
   };
   NewFriends = () => {
-    this.props.props.navigation.navigate('NewFriends');
+    const data = this.state.sendData;
+    this.props.props.navigation.navigate('NewFriends', data);
   };
 
   componentDidMount = () => {
-    this.getFriends();
+    this.getUser();
+    setTimeout(() => {
+      this.getFriends();
+    }, 1000);
   };
 
   render() {

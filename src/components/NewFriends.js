@@ -25,6 +25,7 @@ class NewFriends extends Component {
     this.state = {
       usersSearch: [],
       users: [],
+      mydata: [],
     };
   }
 
@@ -57,7 +58,9 @@ class NewFriends extends Component {
       .onSnapshot(users => {
         let dataUsers = [];
         users.forEach(doc => {
-          dataUsers.push({...doc.data(), index: doc.id});
+          if (doc.data().email !== this.state.mydata.email) {
+            dataUsers.push({...doc.data(), index: doc.id});
+          }
         });
         this.setState({
           users: dataUsers,
@@ -65,26 +68,47 @@ class NewFriends extends Component {
       });
   };
 
+  getdataUser = () => {
+    console.log(this.state.mydata);
+  };
+
   addFriend = friend => {
+    // console.log(friend);
     app
       .firestore()
       .collection('friends')
       .add({
-        email: 'ahmadsaja96.as@gmail.com',
-        friend: friend,
+        email: this.state.mydata.email,
+        friend: friend.email,
+        usernameA: this.state.mydata.usernameA,
+        usernameB: friend.username,
         status: false,
       });
+  };
+
+  gotoProfile = data => {
+    this.props.navigation.navigate('Profile', data);
   };
 
   gotoHome = () => {
     this.props.navigation.navigate('Home');
   };
+  getUser = () => {
+    const data = this.props.route.params;
+    this.setState({
+      mydata: data,
+    });
+  };
 
   componentDidMount = () => {
     this.getAllusers();
+    setTimeout(() => {
+      this.getUser();
+    }, 1000);
   };
 
   render() {
+    // console.log(this.state.mydata);
     return (
       <Container>
         <Header
@@ -112,7 +136,7 @@ class NewFriends extends Component {
           {this.state.users.map(users => {
             return (
               <List key={users.email}>
-                <ListItem thumbnail>
+                <ListItem onPress={() => this.gotoProfile(users)} thumbnail>
                   <Left>
                     <Thumbnail
                       square
@@ -125,7 +149,7 @@ class NewFriends extends Component {
                   <Right>
                     <Button
                       style={style.BtnAdd}
-                      onPress={() => this.addFriend(users.email)}
+                      onPress={() => this.addFriend(users)}
                       transparent>
                       <Icon style={style.icon} name="person-add" />
                     </Button>

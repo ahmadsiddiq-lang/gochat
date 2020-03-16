@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  StatusBar,
 } from 'react-native';
 import {Button} from 'native-base';
 // import app from '../config/firebase';
@@ -33,6 +34,7 @@ class Register extends Component {
         .createUserWithEmailAndPassword(email, password)
         .then(user => {
           this.inserUser();
+          this.clearForm();
           this.props.navigation.navigate('Login');
         });
       this.setState({loading: 1});
@@ -46,6 +48,7 @@ class Register extends Component {
       .firestore()
       .collection('users')
       .add({
+        gender: 0,
         email: this.state.email,
         username: this.state.username,
       })
@@ -54,9 +57,23 @@ class Register extends Component {
       })
       .catch(err => console.log(err));
   };
+
+  backtoLogin = () => {
+    this.props.navigation.navigate('Login');
+  };
+
+  clearForm = () => {
+    this.setState({
+      username: '',
+      email: '',
+      password: '',
+    });
+  };
   render() {
     return (
       <View style={style.Container}>
+        <StatusBar backgroundColor="#05e3fc" barStyle="light-content" />
+        <Text style={style.TitleLogin}>GoChat</Text>
         <ActivityIndicator
           size="large"
           color="#0000ff"
@@ -70,17 +87,21 @@ class Register extends Component {
         <View style={style.Content}>
           <View style={style.FormBox}>
             <TextInput
+              value={this.state.username}
               placeholder="Username"
               onChangeText={username => this.setState({username})}
               style={style.Form}
             />
             <TextInput
+              value={this.state.email}
               autoCapitalize="none"
               placeholder="Email"
               onChangeText={email => this.setState({email})}
               style={style.Form}
             />
             <TextInput
+              value={this.state.password}
+              secureTextEntry={true}
               autoCapitalize="none"
               placeholder="Password"
               onChangeText={password => this.setState({password})}
@@ -99,6 +120,9 @@ class Register extends Component {
             <Text style={style.TextRegister}>Register</Text>
           </Button>
         </View>
+        <Text onPress={() => this.backtoLogin()} style={style.backtologin}>
+          Back to Login
+        </Text>
       </View>
     );
   }
@@ -116,9 +140,13 @@ const style = StyleSheet.create({
   },
   Form: {
     borderColor: '#0a7500',
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 5,
     marginTop: 10,
+    backgroundColor: 'white',
+    fontSize: 17,
+    color: '#696969',
+    fontWeight: 'bold',
   },
   ButtonRegister: {
     marginTop: 15,
@@ -126,9 +154,18 @@ const style = StyleSheet.create({
   },
   TextRegister: {
     color: 'white',
-    fontSize: 15,
+    fontSize: 25,
     fontWeight: 'bold',
-    marginLeft: '40%',
+    marginLeft: '35%',
+  },
+  TitleLogin: {
+    fontSize: 50,
+    top: 100,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  backtologin: {
+    marginTop: 40,
   },
 });
 
