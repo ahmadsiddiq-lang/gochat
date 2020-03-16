@@ -33,7 +33,6 @@ class NewFriends extends Component {
       app
         .firestore()
         .collection('users')
-        // .where('username', '==', this.state.usersSearch)
         .onSnapshot(users => {
           let dataUsers = [];
           users.forEach(doc => {
@@ -67,7 +66,6 @@ class NewFriends extends Component {
   };
 
   addFriend = friend => {
-    // console.log(friend);
     app
       .firestore()
       .collection('friends')
