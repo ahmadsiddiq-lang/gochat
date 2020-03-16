@@ -1,7 +1,15 @@
 import React, {Component} from 'react';
-import {View, Text, Image, StyleSheet, StatusBar} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  StatusBar,
+  TouchableOpacity,
+} from 'react-native';
 import app from '../config/firebase';
 import {Icon, Button} from 'native-base';
+import ImagePicker from 'react-native-image-picker';
 
 class MyProfile extends Component {
   constructor() {
@@ -9,8 +17,37 @@ class MyProfile extends Component {
     this.state = {
       dataUser: [],
       user: '',
+      avatarSource: [],
     };
   }
+
+  handleChoosePhoto = () => {
+    const options = {
+      title: 'Select Avatar',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    ImagePicker.showImagePicker(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+        this.setState({
+          avatarSource: response,
+        });
+      }
+      // }
+    });
+  };
 
   getProfile = () => {
     app
@@ -46,6 +83,7 @@ class MyProfile extends Component {
   };
   render() {
     const data = this.state.dataUser;
+    console.log(this.state.avatarSource.fileSize);
     return (
       <View style={style.Container}>
         <StatusBar backgroundColor="#636363" barStyle="light-content" />
@@ -57,7 +95,23 @@ class MyProfile extends Component {
         </View>
         <View style={style.Content}>
           <View style={style.BoxImg}>
-            <Image source={require('../asset/Ahmad.png')} style={style.Img} />
+            {this.state.avatarSource.fileSize > 0 ? (
+              <TouchableOpacity onPress={() => this.handleChoosePhoto()}>
+                <Image
+                  onPress={() => this.handleChoosePhoto()}
+                  source={this.state.avatarSource}
+                  style={style.Img}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => this.handleChoosePhoto()}>
+                <Image
+                  onPress={() => this.handleChoosePhoto()}
+                  source={require('../asset/Ahmad.png')}
+                  style={style.Img}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <Text style={style.Name}>{data.username}</Text>
@@ -78,7 +132,9 @@ class MyProfile extends Component {
             <Text style={style.folwer}>4</Text>
           </View>
         </View>
-        <Button style={style.buttonUpdate}>
+        <Button
+          style={style.buttonUpdate}
+          onPress={() => this.handleChoosePhoto()}>
           <Text style={style.TextUpdate}>Update</Text>
         </Button>
         <Button onPress={() => this.gotoHome()} style={style.buttonCencel}>
@@ -138,9 +194,9 @@ const style = StyleSheet.create({
   Img: {
     maxWidth: 140,
     maxHeight: 140,
-    opacity: 1,
     borderRadius: 70,
     top: 7,
+    zIndex: 1,
   },
   Name: {
     fontWeight: 'bold',
