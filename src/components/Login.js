@@ -32,10 +32,10 @@ class Register extends Component {
         .then(user => {
           this.props.navigation.navigate('Home');
           this.setState({loading: 0});
+          this.clearForm();
         })
         .catch(err => console.log(err));
       this.setState({loading: 1});
-      this.clearForm();
     } else {
       Alert.alert('Form Empty !');
     }

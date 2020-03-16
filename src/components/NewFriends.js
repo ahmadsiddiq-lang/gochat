@@ -26,6 +26,7 @@ class NewFriends extends Component {
       usersSearch: [],
       users: [],
       mydata: [],
+      user: '',
     };
   }
 
@@ -37,7 +38,13 @@ class NewFriends extends Component {
         .onSnapshot(users => {
           let dataUsers = [];
           users.forEach(doc => {
-            dataUsers.push({...doc.data(), index: doc.id});
+            if (doc.data().email !== this.state.mydata.email) {
+              dataUsers.push({...doc.data(), index: doc.id});
+            } else {
+              this.setState({
+                user: doc.data(),
+              });
+            }
           });
           const text = this.state.usersSearch.trim().toLowerCase();
           const data = dataUsers.filter(l => {
@@ -60,6 +67,10 @@ class NewFriends extends Component {
         users.forEach(doc => {
           if (doc.data().email !== this.state.mydata.email) {
             dataUsers.push({...doc.data(), index: doc.id});
+          } else {
+            this.setState({
+              user: doc.data(),
+            });
           }
         });
         this.setState({
@@ -68,19 +79,14 @@ class NewFriends extends Component {
       });
   };
 
-  getdataUser = () => {
-    console.log(this.state.mydata);
-  };
-
   addFriend = friend => {
-    // console.log(friend);
     app
       .firestore()
       .collection('friends')
       .add({
-        email: this.state.mydata.email,
+        email: this.state.user.email,
+        usernameA: this.state.user.username,
         friend: friend.email,
-        usernameA: this.state.mydata.usernameA,
         usernameB: friend.username,
         status: false,
       });
@@ -94,21 +100,19 @@ class NewFriends extends Component {
     this.props.navigation.navigate('Home');
   };
   getUser = () => {
-    const data = this.props.route.params;
-    this.setState({
-      mydata: data,
+    app.auth().onAuthStateChanged(mydata => {
+      this.setState({
+        mydata: mydata,
+      });
     });
   };
 
   componentDidMount = () => {
     this.getAllusers();
-    setTimeout(() => {
-      this.getUser();
-    }, 1000);
+    this.getUser();
   };
 
   render() {
-    // console.log(this.state.mydata);
     return (
       <Container>
         <Header

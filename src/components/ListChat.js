@@ -30,15 +30,18 @@ class ListChat extends Component {
     app
       .firestore()
       .collection('friends')
-      .where('email', '==', this.state.user.email)
-      .where('status', '==', true)
       .onSnapshot(friens => {
         let dataFriends = [];
         friens.forEach(doc => {
-          dataFriends.push({...doc.data(), index: doc.id});
-          this.setState({
-            sendData: doc.data(),
-          });
+          if (
+            doc.data().email === this.state.user.email ||
+            doc.data().friend === this.state.user.email
+          ) {
+            dataFriends.push({...doc.data(), index: doc.id});
+            this.setState({
+              sendData: doc.data(),
+            });
+          }
         });
         this.setState({
           dataFriends: dataFriends,
@@ -81,7 +84,11 @@ class ListChat extends Component {
                     <Thumbnail source={require('../asset/profile.png')} />
                   </Left>
                   <Body>
-                    <Text>{friends.usernameB}</Text>
+                    {friends.friend === this.state.user.email ? (
+                      <Text>{friends.usernameA}</Text>
+                    ) : (
+                      <Text>{friends.usernameB}</Text>
+                    )}
                     <Text note>
                       Doing what you like will always keep you happy . .
                     </Text>

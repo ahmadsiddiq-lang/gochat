@@ -21,21 +21,36 @@ class Chat extends Component {
     messages: [],
     dataFriend: [],
     dataUser: [],
+    nameChat: '',
     modalVisible: false,
   };
 
   sendMessage = text => {
-    // console.log(text)
-    app
-      .firestore()
-      .collection('chat')
-      .add({
-        chat: text,
-        createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-        email: this.state.dataFriend.email,
-        name: this.state.dataFriend.usernameA,
-        sendto: this.state.dataFriend.friend,
-      });
+    const userA = this.state.dataUser.email;
+    const userB = this.state.dataFriend.friend;
+    if (userA === userB) {
+      app
+        .firestore()
+        .collection('chat')
+        .add({
+          chat: text,
+          createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+          email: this.state.dataUser.email,
+          name: this.state.dataFriend.usernameB,
+          sendto: this.state.dataFriend.email,
+        });
+    } else {
+      app
+        .firestore()
+        .collection('chat')
+        .add({
+          chat: text,
+          createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+          email: this.state.dataUser.email,
+          name: this.state.dataFriend.usernameA,
+          sendto: this.state.dataFriend.friend,
+        });
+    }
   };
 
   getChat = () => {
@@ -57,9 +72,12 @@ class Chat extends Component {
               text: doc.data().chat,
               createdAt: new Date(doc.data().createdAt.toDate()),
               user: {
-                _id: doc.data().email === this.state.dataFriend.email ? 1 : 2,
+                _id: doc.data().email === this.state.dataUser.email ? 1 : 2,
                 name: doc.data().name,
               },
+            });
+            this.setState({
+              nameChat: doc.data().name,
             });
           }
         });
@@ -70,6 +88,7 @@ class Chat extends Component {
   };
 
   componentDidMount() {
+    this.getUser();
     this.setState({
       dataFriend: this.props.route.params,
     });
@@ -77,6 +96,14 @@ class Chat extends Component {
       this.getChat();
     }, 1000);
   }
+
+  getUser = () => {
+    app.auth().onAuthStateChanged(user => {
+      this.setState({
+        dataUser: user,
+      });
+    });
+  };
 
   onSend(messages = []) {
     this.setState(previousState => ({
@@ -91,11 +118,11 @@ class Chat extends Component {
     this.setState({modalVisible: visible});
   }
   gotoProfile = data => {
-    // console.log(data)
     this.setState({modalVisible: false});
     this.props.navigation.navigate('Profile', data);
   };
   render() {
+    console.log(this.props.route.params.usernameA);
     return (
       <Container>
         <Header
@@ -107,7 +134,7 @@ class Chat extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Chat</Title>
+            <Title>{this.state.nameChat}</Title>
           </Body>
           <Right>
             <Button
