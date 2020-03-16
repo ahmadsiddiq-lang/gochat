@@ -76,9 +76,6 @@ class Chat extends Component {
                 name: doc.data().name,
               },
             });
-            this.setState({
-              nameChat: doc.data().name,
-            });
           }
         });
         this.setState({
@@ -94,6 +91,7 @@ class Chat extends Component {
     });
     setTimeout(() => {
       this.getChat();
+      this.getName();
     }, 1000);
   }
 
@@ -103,6 +101,18 @@ class Chat extends Component {
         dataUser: user,
       });
     });
+  };
+
+  getName = async () => {
+    if (this.props.route.params.email === this.state.dataUser.email) {
+      this.setState({
+        nameChat: this.state.dataFriend.usernameB,
+      });
+    } else {
+      this.setState({
+        nameChat: this.state.dataFriend.usernameA,
+      });
+    }
   };
 
   onSend(messages = []) {
@@ -122,7 +132,7 @@ class Chat extends Component {
     this.props.navigation.navigate('Profile', data);
   };
   render() {
-    console.log(this.props.route.params.usernameA);
+    // console.log(this.state.dataFriend);
     return (
       <Container>
         <Header

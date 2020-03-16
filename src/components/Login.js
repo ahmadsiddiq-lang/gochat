@@ -49,9 +49,6 @@ class Register extends Component {
   getUser = () => {
     app.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({
-          user: user,
-        });
         this.props.navigation.navigate('Home');
       }
     });

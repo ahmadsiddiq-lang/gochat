@@ -17,20 +17,19 @@ class Home extends Component {
     this.setState({modalVisible: false});
     this.props.navigation.navigate('MyProfile');
   };
-  gotoLogin = () => {
-    this.props.navigation.navigate('Login');
-  };
   logOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(function() {
-        // Sign-out successful.
-      })
-      .catch(function(error) {
-        // An error happened.
-      });
-    this.gotoLogin();
+    setTimeout(() => {
+      firebase
+        .auth()
+        .signOut()
+        .then(function() {
+          // Sign-out successful.
+        })
+        .catch(function(error) {
+          // An error happened.
+        });
+    }, 1000);
+    this.props.navigation.navigate('Login');
   };
   render() {
     return (
