@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import app from '../config/firebase';
+import firebase from 'firebase';
 import 'firebase/storage';
 import {Icon, Button} from 'native-base';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
-import firebase from 'firebase';
 
 class MyProfile extends Component {
   constructor() {
@@ -21,11 +21,13 @@ class MyProfile extends Component {
       dataUser: [],
       user: '',
       avatarSource: [],
+      imageUser: '',
     };
   }
 
-  getSelectedImages = (selectedImages, currentImage) => {
+  getSelectedImages = () => {
     const image = this.state.avatarSource.uri;
+    const user = this.state.dataUser;
 
     const Blob = RNFetchBlob.polyfill.Blob;
     const fs = RNFetchBlob.fs;
@@ -36,7 +38,7 @@ class MyProfile extends Component {
     const imageRef = app
       .storage()
       .ref('posts')
-      .child('test.jpg');
+      .child(user.email);
     let mime = 'image/jpg';
     fs.readFile(image, 'base64')
       .then(data => {
@@ -53,6 +55,9 @@ class MyProfile extends Component {
       .then(url => {
         // URL of the image uploaded on Firebase storage
         console.log(url);
+        this.setState({
+          avatarSource: url,
+        });
       })
       .catch(error => {
         console.log(error);
@@ -113,32 +118,50 @@ class MyProfile extends Component {
     this.props.navigation.navigate('Home');
   };
 
-  uploadImage = () => {
-    return new Promise((resolve, reject) => {
-      var storageRef = app.storage().ref();
-      storageRef
-        .child('uploads/' + this.state.avatarSource.fileName)
-        .put(this.state.avatarSource, {
-          contentType: 'image/jpeg',
-        })
-        .then(snapshot => {
-          resolve(snapshot);
-        })
-        .catch(error => {
-          reject(error);
+  getImage = async () => {
+    const user = this.state.user.email;
+    const ref = await app.storage().ref('posts/' + user);
+    ref
+      .getDownloadURL()
+      .then(url => {
+        // console.log(url);
+        this.setState({
+          imageUser: url,
         });
-    });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  update = () => {
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(this.state.user.email)
+      .set({
+        gender: 0,
+        email: this.state.user.email,
+        username: this.state.dataUser.username,
+        image: this.state.imageUser,
+      })
+      .then(ref => {
+        console.log(ref);
+      })
+      .catch(err => console.log(err));
   };
 
   componentDidMount = () => {
     this.getUser();
     setTimeout(() => {
       this.getProfile();
+      this.getImage();
     }, 1000);
   };
   render() {
     const data = this.state.dataUser;
-    // console.log(this.state.avatarSource.fileSize);
+    const image = this.state.imageUser;
+    // console.log('ini data image : '+this.state.imageUser);
     return (
       <View style={style.Container}>
         <StatusBar backgroundColor="#636363" barStyle="light-content" />
@@ -162,7 +185,7 @@ class MyProfile extends Component {
               <TouchableOpacity onPress={() => this.handleChoosePhoto()}>
                 <Image
                   onPress={() => this.handleChoosePhoto()}
-                  source={require('../asset/Ahmad.png')}
+                  source={{uri: image}}
                   style={style.Img}
                 />
               </TouchableOpacity>
@@ -187,7 +210,9 @@ class MyProfile extends Component {
             <Text style={style.folwer}>4</Text>
           </View>
         </View>
-        <Button style={style.buttonUpdate} onPress={() => this.getSelectedImages(data)}>
+        <Button
+          style={style.buttonUpdate}
+          onPress={() => this.getSelectedImages(data)}>
           <Text style={style.TextUpdate}>Update</Text>
         </Button>
         <Button onPress={() => this.gotoHome()} style={style.buttonCencel}>
@@ -245,6 +270,8 @@ const style = StyleSheet.create({
     elevation: 13,
   },
   Img: {
+    width: 140,
+    height: 140,
     maxWidth: 140,
     maxHeight: 140,
     borderRadius: 70,

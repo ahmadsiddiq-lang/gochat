@@ -81,7 +81,7 @@ class ListChat extends Component {
               <List key={friends.friend}>
                 <ListItem onPress={() => this.gotoChat(friends)} avatar>
                   <Left>
-                    <Thumbnail source={require('../asset/profile.png')} />
+                    <Thumbnail source={{uri: friends.image}} />
                   </Left>
                   <Body>
                     {friends.friend === this.state.user.email ? (

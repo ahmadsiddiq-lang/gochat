@@ -44,13 +44,17 @@ class Register extends Component {
   };
 
   inserUser = () => {
+    const imageDefault =
+      'https://firebasestorage.googleapis.com/v0/b/gochat-8d5dd.appspot.com/o/posts%2Fprofile.png?alt=media&token=b14e971d-591d-45f5-af38-20dc4e9d4278';
     firebase
       .firestore()
       .collection('users')
-      .add({
+      .doc(this.state.email)
+      .set({
         gender: 0,
         email: this.state.email,
         username: this.state.username,
+        image: imageDefault,
       })
       .then(ref => {
         console.log(ref);

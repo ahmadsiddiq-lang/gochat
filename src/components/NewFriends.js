@@ -88,6 +88,7 @@ class NewFriends extends Component {
         usernameA: this.state.user.username,
         friend: friend.email,
         usernameB: friend.username,
+        image: friend.image,
         status: false,
       });
   };
