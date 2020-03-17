@@ -9,6 +9,7 @@ import NewFriends from './NewFriends';
 import Login from './Login';
 import MyProfile from './MyProfile';
 import Profile from './Profile';
+import ListFriends from './ListFriends';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,7 @@ function App() {
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="NewFriends" component={NewFriends} />
+        <Stack.Screen name="ListFriends" component={ListFriends} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="MyProfile" component={MyProfile} />
         <Stack.Screen name="Profile" component={Profile} />

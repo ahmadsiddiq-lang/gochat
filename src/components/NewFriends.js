@@ -143,10 +143,7 @@ class NewFriends extends Component {
               <List key={users.email}>
                 <ListItem onPress={() => this.gotoProfile(users)} thumbnail>
                   <Left>
-                    <Thumbnail
-                      square
-                      source={require('../asset/profile.png')}
-                    />
+                    <Thumbnail source={{uri: users.image}} />
                   </Left>
                   <Body>
                     <Text>{users.username}</Text>

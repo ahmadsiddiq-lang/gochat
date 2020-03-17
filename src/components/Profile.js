@@ -69,11 +69,14 @@ class Profile extends Component {
       <View style={style.Container}>
         <StatusBar backgroundColor="#636363" barStyle="light-content" />
         <View style={style.Banner}>
-          <Image style={style.imgBanner} />
+          <Image
+            source={require('../asset/Desert.png')}
+            style={style.imgBanner}
+          />
         </View>
         <View style={style.Content}>
           <View style={style.BoxImg}>
-            <Image source={require('../asset/profile.png')} style={style.Img} />
+            <Image source={{uri: data.image}} style={style.Img} />
           </View>
         </View>
         <Text style={style.Name}>{data.username}</Text>
@@ -117,6 +120,11 @@ const style = StyleSheet.create({
     height: '30%',
     backgroundColor: '#636363',
   },
+  imgBanner: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.5,
+  },
   Content: {
     top: 120,
     width: '85%',
@@ -147,6 +155,8 @@ const style = StyleSheet.create({
     elevation: 13,
   },
   Img: {
+    width: 140,
+    height: 140,
     maxWidth: 140,
     maxHeight: 140,
     opacity: 1,

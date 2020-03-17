@@ -22,9 +22,50 @@ class ListChat extends Component {
       active: false,
       dataFriends: [],
       user: '',
+      users: [],
       sendData: '',
+      messages: '',
+      data: [],
     };
   }
+
+  getChat = () => {
+    console.log(this.state.user.email);
+    app
+      .firestore()
+      .collection('chat')
+      .onSnapshot(chat => {
+        const dataChat = this.state.users;
+        chat.forEach(doc => {
+          if (
+            doc.data().email === this.state.user.email ||
+            doc.data().sendto === this.state.user.email
+          ) {
+            dataChat.push({...doc.data(), index: doc.id});
+          }
+        });
+        this.setState({
+          messages: dataChat,
+        });
+      });
+  };
+
+  getAllusers = () => {
+    app
+      .firestore()
+      .collection('users')
+      .onSnapshot(users => {
+        let dataUsers = [];
+        users.forEach(doc => {
+          if (doc.data().email !== this.state.user.email) {
+            dataUsers.push({...doc.data(), index: doc.id});
+          }
+        });
+        this.setState({
+          users: dataUsers,
+        });
+      });
+  };
 
   getFriends = () => {
     app
@@ -38,9 +79,6 @@ class ListChat extends Component {
             doc.data().friend === this.state.user.email
           ) {
             dataFriends.push({...doc.data(), index: doc.id});
-            this.setState({
-              sendData: doc.data(),
-            });
           }
         });
         this.setState({
@@ -66,13 +104,16 @@ class ListChat extends Component {
   };
 
   componentDidMount = () => {
+    this.getAllusers();
     this.getUser();
     setTimeout(() => {
+      this.getChat();
       this.getFriends();
     }, 1000);
   };
 
   render() {
+    console.log(this.state.dataFriends);
     return (
       <Container>
         <Content>
@@ -80,18 +121,22 @@ class ListChat extends Component {
             return (
               <List key={friends.friend}>
                 <ListItem onPress={() => this.gotoChat(friends)} avatar>
-                  <Left>
-                    <Thumbnail source={{uri: friends.image}} />
-                  </Left>
+                  {friends.friend === this.state.user.email ? (
+                    <Left>
+                      <Thumbnail source={{uri: friends.imageA}} />
+                    </Left>
+                  ) : (
+                    <Left>
+                      <Thumbnail source={{uri: friends.imageB}} />
+                    </Left>
+                  )}
                   <Body>
                     {friends.friend === this.state.user.email ? (
                       <Text>{friends.usernameA}</Text>
                     ) : (
                       <Text>{friends.usernameB}</Text>
                     )}
-                    <Text note>
-                      Doing what you like will always keep you happy . .
-                    </Text>
+                    <Text note>Selamat malam bro</Text>
                   </Body>
                   <Right>
                     <Text note>3:43 pm</Text>
