@@ -23,11 +23,13 @@ class Chat extends Component {
     dataUser: [],
     nameChat: '',
     modalVisible: false,
+    image: '',
   };
 
   sendMessage = text => {
     const userA = this.state.dataUser.email;
     const userB = this.state.dataFriend.friend;
+    console.log(this.state.dataFriend)
     if (userA === userB) {
       app
         .firestore()
@@ -38,6 +40,7 @@ class Chat extends Component {
           email: this.state.dataUser.email,
           name: this.state.dataFriend.usernameB,
           sendto: this.state.dataFriend.email,
+          image: this.state.image.imageB,
         });
     } else {
       app
@@ -49,6 +52,7 @@ class Chat extends Component {
           email: this.state.dataUser.email,
           name: this.state.dataFriend.usernameA,
           sendto: this.state.dataFriend.friend,
+          image: this.state.image.imageA,
         });
     }
   };
@@ -74,6 +78,7 @@ class Chat extends Component {
               user: {
                 _id: doc.data().email === this.state.dataUser.email ? 1 : 2,
                 name: doc.data().name,
+                avatar: doc.data().image,
               },
             });
           }
@@ -86,6 +91,7 @@ class Chat extends Component {
 
   componentDidMount() {
     this.getUser();
+    this.getprofile();
     this.setState({
       dataFriend: this.props.route.params,
     });
@@ -101,6 +107,19 @@ class Chat extends Component {
         dataUser: user,
       });
     });
+  };
+
+  getprofile = () => {
+    // console.log(this.props.route.params);
+    // if (this.props.route.params.email === this.state.dataUser.email) {
+    this.setState({
+      image: this.props.route.params,
+    });
+    // } else {
+    //   this.setState({
+    //     image: this.props.route.params.emailA,
+    //   });
+    // }
   };
 
   getName = async () => {

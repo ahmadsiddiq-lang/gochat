@@ -123,7 +123,6 @@ class ListChat extends Component {
   };
 
   render() {
-    console.log(this.state.dataFriends);
     return (
       <Container>
         <Content>

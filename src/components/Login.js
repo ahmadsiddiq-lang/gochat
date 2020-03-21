@@ -12,7 +12,6 @@ import {
   Image,
 } from 'react-native';
 import {Button} from 'native-base';
-// import app from '../config/firebase';
 import firebase from 'firebase';
 import {StackActions} from '@react-navigation/native';
 
