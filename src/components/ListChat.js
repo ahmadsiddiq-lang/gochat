@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
+import {ActivityIndicator} from 'react-native';
 import {
   Container,
   Content,
@@ -26,72 +27,81 @@ class ListChat extends Component {
       sendData: '',
       messages: '',
       data: [],
+      loading: 1,
     };
   }
 
   getChat = () => {
-    console.log(this.state.user.email);
-    app
-      .firestore()
-      .collection('chat')
-      .onSnapshot(chat => {
-        const dataChat = this.state.users;
-        chat.forEach(doc => {
-          if (
-            doc.data().email === this.state.user.email ||
-            doc.data().sendto === this.state.user.email
-          ) {
-            dataChat.push({...doc.data(), index: doc.id});
-          }
+    if (this.state.user !== null) {
+      app
+        .firestore()
+        .collection('chat')
+        .onSnapshot(chat => {
+          const dataChat = this.state.users;
+          chat.forEach(doc => {
+            if (
+              doc.data().email === this.state.user.email ||
+              doc.data().sendto === this.state.user.email
+            ) {
+              dataChat.push({...doc.data(), index: doc.id});
+            }
+          });
+          this.setState({
+            messages: dataChat,
+          });
         });
-        this.setState({
-          messages: dataChat,
-        });
-      });
+    }
   };
 
   getAllusers = () => {
-    app
-      .firestore()
-      .collection('users')
-      .onSnapshot(users => {
-        let dataUsers = [];
-        users.forEach(doc => {
-          if (doc.data().email !== this.state.user.email) {
-            dataUsers.push({...doc.data(), index: doc.id});
-          }
+    if (this.state.user.email !== null) {
+      app
+        .firestore()
+        .collection('users')
+        .onSnapshot(users => {
+          let dataUsers = [];
+          users.forEach(doc => {
+            if (doc.data().email !== this.state.user.email) {
+              dataUsers.push({...doc.data(), index: doc.id});
+            }
+          });
+          this.setState({
+            users: dataUsers,
+          });
         });
-        this.setState({
-          users: dataUsers,
-        });
-      });
+    }
   };
 
   getFriends = () => {
-    app
-      .firestore()
-      .collection('friends')
-      .onSnapshot(friens => {
-        let dataFriends = [];
-        friens.forEach(doc => {
-          if (
-            doc.data().email === this.state.user.email ||
-            doc.data().friend === this.state.user.email
-          ) {
-            dataFriends.push({...doc.data(), index: doc.id});
-          }
+    if (this.state.user !== null) {
+      app
+        .firestore()
+        .collection('friends')
+        .onSnapshot(friens => {
+          let dataFriends = [];
+          friens.forEach(doc => {
+            if (
+              doc.data().email === this.state.user.email ||
+              doc.data().friend === this.state.user.email
+            ) {
+              dataFriends.push({...doc.data(), index: doc.id});
+            }
+          });
+          this.setState({
+            dataFriends: dataFriends,
+            loading: 0,
+          });
         });
-        this.setState({
-          dataFriends: dataFriends,
-        });
-      });
+    }
   };
 
   getUser = () => {
     app.auth().onAuthStateChanged(user => {
-      this.setState({
-        user: user,
-      });
+      if (user) {
+        this.setState({
+          user: user,
+        });
+      }
     });
   };
 
@@ -146,6 +156,17 @@ class ListChat extends Component {
             );
           })}
         </Content>
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          style={{
+            opacity: this.state.loading,
+            position: 'absolute',
+            top: '50%',
+            left: '45%',
+            // zIndex: 1,
+          }}
+        />
         <Fab
           active={this.state.active}
           direction="up"

@@ -18,6 +18,8 @@ class Home extends Component {
     this.props.navigation.navigate('MyProfile');
   };
   logOut = () => {
+    this.setState({modalVisible: false});
+    this.props.navigation.navigate('Login');
     setTimeout(() => {
       firebase
         .auth()
@@ -29,7 +31,6 @@ class Home extends Component {
           // An error happened.
         });
     }, 1000);
-    this.props.navigation.navigate('Login');
   };
   render() {
     return (

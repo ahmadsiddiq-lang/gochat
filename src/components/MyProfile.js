@@ -12,7 +12,7 @@ import firebase from 'firebase';
 import 'firebase/storage';
 import {Icon, Button} from 'native-base';
 import ImagePicker from 'react-native-image-picker';
-import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from 'rn-fetch-blob';
 
 class MyProfile extends Component {
   constructor() {

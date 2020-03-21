@@ -9,10 +9,12 @@ import {
   Alert,
   StatusBar,
   TouchableHighlight,
+  Image,
 } from 'react-native';
 import {Button} from 'native-base';
-import app from '../config/firebase';
+// import app from '../config/firebase';
 import firebase from 'firebase';
+import {StackActions} from '@react-navigation/native';
 
 class Register extends Component {
   constructor() {
@@ -30,7 +32,7 @@ class Register extends Component {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(user => {
-          this.props.navigation.navigate('Home');
+          this.props.navigation.dispatch(StackActions.replace('Home'));
           this.setState({loading: 0});
           this.clearForm();
         })
@@ -46,20 +48,10 @@ class Register extends Component {
       password: '',
     });
   };
-  getUser = () => {
-    app.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.props.navigation.navigate('Home');
-      }
-    });
-  };
   gotoRegister = () => {
     this.props.navigation.navigate('Register');
   };
 
-  componentDidMount = () => {
-    this.getUser();
-  };
   render() {
     return (
       <View style={style.Container}>
@@ -69,11 +61,12 @@ class Register extends Component {
           style={{
             opacity: this.state.loading,
             position: 'absolute',
-            top: '65%',
+            top: '50%',
             zIndex: 1,
           }}
         />
         <StatusBar backgroundColor="#05e3fc" barStyle="light-content" />
+        <Image style={style.ImageIcon} source={require('../asset/icon.png')} />
         <Text style={style.TitleLogin}>GoChat</Text>
         <View style={style.Content}>
           <View style={style.FormBox}>
@@ -115,7 +108,12 @@ const style = StyleSheet.create({
   },
   Content: {
     width: '80%',
-    marginTop: '30%',
+    marginTop: '10%',
+  },
+  ImageIcon: {
+    top: '5%',
+    width: 150,
+    height: 150,
   },
   Form: {
     borderColor: '#0a7500',
@@ -139,7 +137,7 @@ const style = StyleSheet.create({
   },
   TitleLogin: {
     fontSize: 50,
-    top: 100,
+    top: 10,
     color: 'white',
     fontWeight: 'bold',
   },

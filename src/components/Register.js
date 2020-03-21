@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
   StatusBar,
+  Image,
 } from 'react-native';
 import {Button} from 'native-base';
 // import app from '../config/firebase';
@@ -77,6 +78,7 @@ class Register extends Component {
     return (
       <View style={style.Container}>
         <StatusBar backgroundColor="#05e3fc" barStyle="light-content" />
+        <Image style={style.ImageIcon} source={require('../asset/icon.png')} />
         <Text style={style.TitleLogin}>GoChat</Text>
         <ActivityIndicator
           size="large"
@@ -140,7 +142,7 @@ const style = StyleSheet.create({
   },
   Content: {
     width: '80%',
-    marginTop: '30%',
+    marginTop: '5%',
   },
   Form: {
     borderColor: '#0a7500',
@@ -151,6 +153,11 @@ const style = StyleSheet.create({
     fontSize: 17,
     color: '#696969',
     fontWeight: 'bold',
+  },
+  ImageIcon: {
+    top: '5%',
+    width: 150,
+    height: 150,
   },
   ButtonRegister: {
     marginTop: 15,
@@ -164,7 +171,7 @@ const style = StyleSheet.create({
   },
   TitleLogin: {
     fontSize: 50,
-    top: 100,
+    top: 10,
     color: 'white',
     fontWeight: 'bold',
   },

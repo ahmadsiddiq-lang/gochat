@@ -18,18 +18,18 @@
 //   // Initialize Firebase
 //   firebase.initializeApp(firebaseConfig);
 // </script>
-import firebase from 'firebase/app';
+import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDdg35a7umPVb4mKoyBtkETYCmu_oGLPyo',
-  authDomain: 'gochat-8d5dd.firebaseapp.com',
-  databaseURL: 'https://gochat-8d5dd.firebaseio.com',
-  projectId: 'gochat-8d5dd',
-  storageBucket: 'gochat-8d5dd.appspot.com',
-  messagingSenderId: '1034025662118',
-  appId: '1:1034025662118:web:cda20a2ac0276e9ef72667',
+  apiKey: "AIzaSyDdg35a7umPVb4mKoyBtkETYCmu_oGLPyo",
+  authDomain: "gochat-8d5dd.firebaseapp.com",
+  databaseURL: "https://gochat-8d5dd.firebaseio.com",
+  projectId: "gochat-8d5dd",
+  storageBucket: "gochat-8d5dd.appspot.com",
+  messagingSenderId: "1034025662118",
+  appId: "1:1034025662118:web:cda20a2ac0276e9ef72667"
 };
 const app = firebase.initializeApp(firebaseConfig);
 export default app;
