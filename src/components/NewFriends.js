@@ -25,6 +25,8 @@ class NewFriends extends Component {
     this.state = {
       usersSearch: [],
       users: [],
+      mydata: [],
+      user: '',
     };
   }
 
@@ -36,7 +38,13 @@ class NewFriends extends Component {
         .onSnapshot(users => {
           let dataUsers = [];
           users.forEach(doc => {
-            dataUsers.push({...doc.data(), index: doc.id});
+            if (doc.data().email !== this.state.mydata.email) {
+              dataUsers.push({...doc.data(), index: doc.id});
+            } else {
+              this.setState({
+                user: doc.data(),
+              });
+            }
           });
           const text = this.state.usersSearch.trim().toLowerCase();
           const data = dataUsers.filter(l => {
@@ -57,7 +65,13 @@ class NewFriends extends Component {
       .onSnapshot(users => {
         let dataUsers = [];
         users.forEach(doc => {
-          dataUsers.push({...doc.data(), index: doc.id});
+          if (doc.data().email !== this.state.mydata.email) {
+            dataUsers.push({...doc.data(), index: doc.id});
+          } else {
+            this.setState({
+              user: doc.data(),
+            });
+          }
         });
         this.setState({
           users: dataUsers,
@@ -70,18 +84,33 @@ class NewFriends extends Component {
       .firestore()
       .collection('friends')
       .add({
-        email: 'ahmadsaja96.as@gmail.com',
-        friend: friend,
+        email: this.state.user.email,
+        usernameA: this.state.user.username,
+        friend: friend.email,
+        usernameB: friend.username,
+        image: friend.image,
         status: false,
       });
+  };
+
+  gotoProfile = data => {
+    this.props.navigation.navigate('Profile', data);
   };
 
   gotoHome = () => {
     this.props.navigation.navigate('Home');
   };
+  getUser = () => {
+    app.auth().onAuthStateChanged(mydata => {
+      this.setState({
+        mydata: mydata,
+      });
+    });
+  };
 
   componentDidMount = () => {
     this.getAllusers();
+    this.getUser();
   };
 
   render() {
@@ -112,12 +141,9 @@ class NewFriends extends Component {
           {this.state.users.map(users => {
             return (
               <List key={users.email}>
-                <ListItem thumbnail>
+                <ListItem onPress={() => this.gotoProfile(users)} thumbnail>
                   <Left>
-                    <Thumbnail
-                      square
-                      source={require('../asset/profile.png')}
-                    />
+                    <Thumbnail source={{uri: users.image}} />
                   </Left>
                   <Body>
                     <Text>{users.username}</Text>
@@ -125,7 +151,7 @@ class NewFriends extends Component {
                   <Right>
                     <Button
                       style={style.BtnAdd}
-                      onPress={() => this.addFriend(users.email)}
+                      onPress={() => this.addFriend(users)}
                       transparent>
                       <Icon style={style.icon} name="person-add" />
                     </Button>

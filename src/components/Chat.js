@@ -11,6 +11,7 @@ import {
   Icon,
   Title,
 } from 'native-base';
+import {Modal, Text, TouchableHighlight, View, StyleSheet} from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 import app from '../config/firebase';
 import firebase from 'firebase';
@@ -20,20 +21,36 @@ class Chat extends Component {
     messages: [],
     dataFriend: [],
     dataUser: [],
+    nameChat: '',
+    modalVisible: false,
   };
 
   sendMessage = text => {
-    // console.log(text)
-    app
-      .firestore()
-      .collection('chat')
-      .add({
-        chat: text,
-        createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-        email: this.state.dataFriend.email,
-        name: this.state.dataFriend.usernameA,
-        sendto: this.state.dataFriend.friend,
-      });
+    const userA = this.state.dataUser.email;
+    const userB = this.state.dataFriend.friend;
+    if (userA === userB) {
+      app
+        .firestore()
+        .collection('chat')
+        .add({
+          chat: text,
+          createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+          email: this.state.dataUser.email,
+          name: this.state.dataFriend.usernameB,
+          sendto: this.state.dataFriend.email,
+        });
+    } else {
+      app
+        .firestore()
+        .collection('chat')
+        .add({
+          chat: text,
+          createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+          email: this.state.dataUser.email,
+          name: this.state.dataFriend.usernameA,
+          sendto: this.state.dataFriend.friend,
+        });
+    }
   };
 
   getChat = () => {
@@ -55,7 +72,7 @@ class Chat extends Component {
               text: doc.data().chat,
               createdAt: new Date(doc.data().createdAt.toDate()),
               user: {
-                _id: doc.data().email === this.state.dataFriend.email ? 1 : 2,
+                _id: doc.data().email === this.state.dataUser.email ? 1 : 2,
                 name: doc.data().name,
               },
             });
@@ -68,13 +85,35 @@ class Chat extends Component {
   };
 
   componentDidMount() {
+    this.getUser();
     this.setState({
       dataFriend: this.props.route.params,
     });
     setTimeout(() => {
       this.getChat();
+      this.getName();
     }, 1000);
   }
+
+  getUser = () => {
+    app.auth().onAuthStateChanged(user => {
+      this.setState({
+        dataUser: user,
+      });
+    });
+  };
+
+  getName = async () => {
+    if (this.props.route.params.email === this.state.dataUser.email) {
+      this.setState({
+        nameChat: this.state.dataFriend.usernameB,
+      });
+    } else {
+      this.setState({
+        nameChat: this.state.dataFriend.usernameA,
+      });
+    }
+  };
 
   onSend(messages = []) {
     this.setState(previousState => ({
@@ -84,7 +123,16 @@ class Chat extends Component {
   gotoHome = () => {
     this.props.navigation.navigate('Home');
   };
+
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+  gotoProfile = data => {
+    this.setState({modalVisible: false});
+    this.props.navigation.navigate('Profile', data);
+  };
   render() {
+    // console.log(this.state.dataFriend);
     return (
       <Container>
         <Header
@@ -96,10 +144,14 @@ class Chat extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Chat</Title>
+            <Title>{this.state.nameChat}</Title>
           </Body>
           <Right>
-            <Button onPress={() => this.getChat()} transparent>
+            <Button
+              onPress={() => {
+                this.setModalVisible(true);
+              }}
+              transparent>
               <Icon name="more" />
             </Button>
           </Right>
@@ -111,9 +163,58 @@ class Chat extends Component {
             _id: 1,
           }}
         />
+        <View style={{marginTop: 22}}>
+          <Modal
+            style={style.Modal}
+            animationType="fade"
+            transparent={true}
+            visible={this.state.modalVisible}>
+            <View style={style.BoxModal}>
+              <View>
+                <Text
+                  onPress={() => this.gotoProfile(this.state.dataFriend)}
+                  style={style.Text}>
+                  Profile
+                </Text>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}>
+                  <Text style={style.Text}>Cencel</Text>
+                </TouchableHighlight>
+                <Text style={style.Text}>Logout</Text>
+              </View>
+            </View>
+          </Modal>
+        </View>
       </Container>
     );
   }
 }
+
+const style = StyleSheet.create({
+  Modal: {
+    alignContent: 'flex-end',
+  },
+  BoxModal: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    position: 'absolute',
+    right: 5,
+    top: 5,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 10,
+  },
+  Text: {
+    padding: 5,
+  },
+});
 
 export default Chat;

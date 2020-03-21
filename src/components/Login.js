@@ -7,10 +7,14 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  StatusBar,
+  TouchableHighlight,
+  Image,
 } from 'react-native';
 import {Button} from 'native-base';
 // import app from '../config/firebase';
 import firebase from 'firebase';
+import {StackActions} from '@react-navigation/native';
 
 class Register extends Component {
   constructor() {
@@ -19,6 +23,7 @@ class Register extends Component {
       email: '',
       password: '',
       loading: 0,
+      user: '',
     };
   }
   login = (email, password) => {
@@ -27,13 +32,26 @@ class Register extends Component {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(user => {
-          this.props.navigation.navigate('Home');
-        });
+          this.props.navigation.dispatch(StackActions.replace('Home'));
+          this.setState({loading: 0});
+          this.clearForm();
+        })
+        .catch(err => console.log(err));
       this.setState({loading: 1});
     } else {
       Alert.alert('Form Empty !');
     }
   };
+  clearForm = () => {
+    this.setState({
+      email: '',
+      password: '',
+    });
+  };
+  gotoRegister = () => {
+    this.props.navigation.navigate('Register');
+  };
+
   render() {
     return (
       <View style={style.Container}>
@@ -43,21 +61,27 @@ class Register extends Component {
           style={{
             opacity: this.state.loading,
             position: 'absolute',
-            top: '65%',
+            top: '50%',
             zIndex: 1,
           }}
         />
+        <StatusBar backgroundColor="#05e3fc" barStyle="light-content" />
+        <Image style={style.ImageIcon} source={require('../asset/icon.png')} />
+        <Text style={style.TitleLogin}>GoChat</Text>
         <View style={style.Content}>
           <View style={style.FormBox}>
             <TextInput
+              value={this.state.email}
               autoCapitalize="none"
               placeholder="Email"
               onChangeText={email => this.setState({email})}
               style={style.Form}
             />
             <TextInput
+              value={this.state.password}
               autoCapitalize="none"
               placeholder="Password"
+              secureTextEntry={true}
               onChangeText={password => this.setState({password})}
               style={style.Form}
             />
@@ -68,6 +92,9 @@ class Register extends Component {
             <Text style={style.TextRegister}>Login</Text>
           </Button>
         </View>
+        <TouchableHighlight onPress={() => this.gotoRegister()}>
+          <Text style={style.backtologin}>Register</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -81,7 +108,12 @@ const style = StyleSheet.create({
   },
   Content: {
     width: '80%',
-    marginTop: '30%',
+    marginTop: '10%',
+  },
+  ImageIcon: {
+    top: '5%',
+    width: 150,
+    height: 150,
   },
   Form: {
     borderColor: '#0a7500',
@@ -99,9 +131,18 @@ const style = StyleSheet.create({
   },
   TextRegister: {
     color: 'white',
-    fontSize: 17,
+    fontSize: 25,
     fontWeight: 'bold',
     marginLeft: '40%',
+  },
+  TitleLogin: {
+    fontSize: 50,
+    top: 10,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  backtologin: {
+    marginTop: 40,
   },
 });
 
