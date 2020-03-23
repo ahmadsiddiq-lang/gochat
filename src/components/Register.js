@@ -22,6 +22,7 @@ class Register extends Component {
       email: '',
       password: '',
       loading: 0,
+      warning: 0,
     };
   }
   register = (email, password) => {
@@ -37,6 +38,11 @@ class Register extends Component {
           this.inserUser();
           this.clearForm();
           this.props.navigation.navigate('Login');
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(err => {
+          this.setState({loading: 0});
+          this.setState({warning: 1});
         });
       this.setState({loading: 1});
     } else {
@@ -91,6 +97,14 @@ class Register extends Component {
           }}
         />
         <View style={style.Content}>
+          <Text
+            style={{
+              fontStyle: 'italic',
+              color: 'red',
+              opacity: this.state.warning,
+            }}>
+            Email Invalid !
+          </Text>
           <View style={style.FormBox}>
             <TextInput
               value={this.state.username}
