@@ -11,6 +11,7 @@ import MyProfile from './MyProfile';
 import Profile from './Profile';
 import app from '../config/firebase';
 import Splash from './SplashScreen';
+import Map from './Map';
 
 const Stack = createStackNavigator();
 
@@ -48,6 +49,7 @@ function App() {
             <Stack.Screen name="MyProfile" component={MyProfile} />
             <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="Splash" component={Splash} />
+            <Stack.Screen name="Map" component={Map} />
           </Stack.Navigator>
         </NavigationContainer>
       ) : (

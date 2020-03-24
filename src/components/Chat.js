@@ -150,6 +150,10 @@ class Chat extends Component {
     this.setState({modalVisible: false});
     this.props.navigation.navigate('Profile', data);
   };
+  gotoMap = data => {
+    this.setState({modalVisible: false});
+    this.props.navigation.navigate('Map', data);
+  }
   render() {
     // console.log(this.state.dataFriend);
     return (
@@ -194,6 +198,11 @@ class Chat extends Component {
                   onPress={() => this.gotoProfile(this.state.dataFriend)}
                   style={style.Text}>
                   Profile
+                </Text>
+                <Text
+                  onPress={() => this.gotoMap(this.state.dataFriend)}
+                  style={style.Text}>
+                  Map
                 </Text>
                 <TouchableHighlight
                   onPress={() => {
