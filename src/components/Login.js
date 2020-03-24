@@ -10,6 +10,7 @@ import {
   StatusBar,
   TouchableHighlight,
   Image,
+  AsyncStorage,
 } from 'react-native';
 import {Button} from 'native-base';
 import firebase from 'firebase';
@@ -32,6 +33,7 @@ class Register extends Component {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(user => {
+          AsyncStorage.setItem('user', user.user.email);
           this.props.navigation.dispatch(StackActions.replace('Home'));
           this.setState({loading: 0});
           this.clearForm();

@@ -12,7 +12,14 @@ import {
   Tabs,
   TabHeading,
 } from 'native-base';
-import {Modal, Text, TouchableHighlight, View, StyleSheet} from 'react-native';
+import {
+  Modal,
+  Text,
+  TouchableHighlight,
+  View,
+  StyleSheet,
+  AsyncStorage,
+} from 'react-native';
 import ListChat from './ListChat';
 import firebase from 'firebase';
 import Maps from './Maps';
@@ -43,6 +50,7 @@ class Home extends Component {
           // An error happened.
         });
     }, 1000);
+    AsyncStorage.removeItem('user');
   };
   render() {
     return (
@@ -66,7 +74,7 @@ class Home extends Component {
             </Button>
           </Right>
         </Header>
-        <Tabs style={style.Tabst}>
+        <Tabs>
           <Tab
             heading={
               <TabHeading style={style.Tabst}>

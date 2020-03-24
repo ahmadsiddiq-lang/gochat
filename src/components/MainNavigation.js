@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {AsyncStorage} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Home from './Home';
@@ -17,6 +18,7 @@ const Stack = createStackNavigator();
 function App() {
   const [login, setLogin] = useState(false);
   const [ready, setReady] = useState(false);
+  const [positionMap, curentPosition] = useState(false);
 
   const checkLogin = () => {
     app.auth().onAuthStateChanged(user => {
@@ -31,7 +33,45 @@ function App() {
     });
   };
 
+  const trackMaps = async () => {
+    const user = await AsyncStorage.getItem('user');
+    if (positionMap) {
+      let data = {
+        latitude: positionMap.latitude,
+        longitude: positionMap.longitude,
+      };
+      app
+        .firestore()
+        .collection('Maps')
+        .doc(user)
+        .set(data);
+    }
+  };
+
+  const getCoordinate = () => {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        // Alert.alert(position)
+        // console.log(position.coords)
+        const {longitude, latitude} = position.coords;
+        let data = {
+          latitude: latitude,
+          longitude: longitude,
+          latitudeDelta: 0,
+          longitudeDelta: 0.05,
+        };
+        curentPosition(data);
+        trackMaps();
+        // console.warn(longitude, latitude);
+      },
+      error => console.log(error.message),
+      {timeout: 20000, maximumAge: 1000},
+    );
+  };
+
   useEffect(() => checkLogin(), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => getCoordinate(), []);
   return (
     <>
       {ready ? (

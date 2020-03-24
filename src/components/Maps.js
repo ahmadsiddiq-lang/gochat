@@ -1,16 +1,33 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, AsyncStorage} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import {Spinner} from 'native-base';
 import '@react-native-community/geolocation';
+import app from '../config/firebase';
 navigator.geolocation = require('@react-native-community/geolocation');
 
 class Maps extends Component {
   constructor() {
     super();
     this.state = {
-      curentPosition: {},
+      curentPosition: false,
     };
   }
+
+  trackMaps = async () => {
+    const user = await AsyncStorage.getItem('user');
+    if (this.state.curentPosition && user) {
+      let data = {
+        latitude: this.state.curentPosition.latitude,
+        longitude: this.state.curentPosition.longitude,
+      };
+      app
+        .firestore()
+        .collection('Maps')
+        .doc(user)
+        .set(data);
+    }
+  };
 
   getCoordinate = () => {
     navigator.geolocation.getCurrentPosition(
@@ -24,10 +41,10 @@ class Maps extends Component {
           latitudeDelta: 0,
           longitudeDelta: 0.05,
         };
-        console.warn(data);
         this.setState({
           curentPosition: data,
         });
+        this.trackMaps();
         // console.warn(longitude, latitude);
       },
       error => console.log(error.message),
@@ -37,19 +54,26 @@ class Maps extends Component {
 
   componentDidMount() {
     this.getCoordinate();
-  };
+    setInterval(() => {
+      this.trackMaps();
+    }, 60000);
+  }
 
   render() {
     const data = this.state.curentPosition;
     return (
       <View style={styles.container}>
-        <MapView
-          provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-          style={styles.map}
-          region={data}
-          showsUserLocation>
-          {/* <Marker coordinate={data} /> */}
-        </MapView>
+        {data ? (
+          <MapView
+            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+            style={styles.map}
+            initialRegion={data}
+            showsUserLocation>
+            {/* <Marker coordinate={data} /> */}
+          </MapView>
+        ) : (
+          <Spinner />
+        )}
       </View>
     );
   }

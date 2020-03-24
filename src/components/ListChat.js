@@ -32,7 +32,7 @@ class ListChat extends Component {
   }
 
   getChat = () => {
-    if (this.state.user !== null) {
+    if (this.state.user) {
       app
         .firestore()
         .collection('chat')
@@ -54,7 +54,7 @@ class ListChat extends Component {
   };
 
   getAllusers = () => {
-    if (this.state.user.email !== null) {
+    if (this.state.user.email) {
       app
         .firestore()
         .collection('users')
@@ -73,7 +73,7 @@ class ListChat extends Component {
   };
 
   getFriends = () => {
-    if (this.state.user !== null) {
+    if (this.state.user.email) {
       app
         .firestore()
         .collection('friends')
