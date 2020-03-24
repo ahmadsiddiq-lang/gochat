@@ -29,7 +29,6 @@ class Chat extends Component {
   sendMessage = text => {
     const userA = this.state.dataUser.email;
     const userB = this.state.dataFriend.friend;
-    console.log(this.state.dataFriend)
     if (userA === userB) {
       app
         .firestore()
@@ -153,7 +152,7 @@ class Chat extends Component {
   gotoMap = data => {
     this.setState({modalVisible: false});
     this.props.navigation.navigate('Map', data);
-  }
+  };
   render() {
     // console.log(this.state.dataFriend);
     return (
@@ -202,7 +201,7 @@ class Chat extends Component {
                 <Text
                   onPress={() => this.gotoMap(this.state.dataFriend)}
                   style={style.Text}>
-                  Map
+                  Position
                 </Text>
                 <TouchableHighlight
                   onPress={() => {
@@ -210,7 +209,6 @@ class Chat extends Component {
                   }}>
                   <Text style={style.Text}>Cencel</Text>
                 </TouchableHighlight>
-                <Text style={style.Text}>Logout</Text>
               </View>
             </View>
           </Modal>

@@ -200,7 +200,7 @@ class ListChat extends Component {
         </Content>
         <ActivityIndicator
           size="large"
-          color="#0000ff"
+          color="green"
           style={{
             opacity: this.state.loading,
             position: 'absolute',

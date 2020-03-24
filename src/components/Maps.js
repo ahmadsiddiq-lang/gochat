@@ -53,7 +53,9 @@ class Maps extends Component {
   };
 
   componentDidMount() {
-    this.getCoordinate();
+    setTimeout(() => {
+      this.getCoordinate();
+    }, 1000);
     setInterval(() => {
       this.trackMaps();
     }, 60000);
@@ -72,7 +74,7 @@ class Maps extends Component {
             {/* <Marker coordinate={data} /> */}
           </MapView>
         ) : (
-          <Spinner />
+          <Spinner style={styles.loading} />
         )}
       </View>
     );
@@ -89,6 +91,9 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  loading: {
+    bottom: '40%',
   },
 });
 

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Alert} from 'react-native';
 import {
   Container,
   Header,
@@ -88,8 +88,12 @@ class NewFriends extends Component {
         usernameA: this.state.user.username,
         friend: friend.email,
         usernameB: friend.username,
-        image: friend.image,
+        imageA: this.state.user.image,
+        imageB: friend.image,
         status: false,
+      })
+      .then(data => {
+        Alert.alert('Success !');
       });
   };
 
