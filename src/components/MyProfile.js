@@ -6,6 +6,7 @@ import {
   StyleSheet,
   StatusBar,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import app from '../config/firebase';
 import firebase from 'firebase';
@@ -58,6 +59,8 @@ class MyProfile extends Component {
         this.setState({
           avatarSource: url,
         });
+        this.getImage();
+        Alert.alert('Success !');
       })
       .catch(error => {
         console.log(error);
