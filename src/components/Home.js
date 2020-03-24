@@ -1,9 +1,28 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {Container, Header, Body, Right, Button, Icon, Title} from 'native-base';
-import {Modal, Text, TouchableHighlight, View, StyleSheet} from 'react-native';
+import {
+  Container,
+  Header,
+  Body,
+  Right,
+  Button,
+  Icon,
+  Title,
+  Tab,
+  Tabs,
+  TabHeading,
+} from 'native-base';
+import {
+  Modal,
+  Text,
+  TouchableHighlight,
+  View,
+  StyleSheet,
+  AsyncStorage,
+} from 'react-native';
 import ListChat from './ListChat';
 import firebase from 'firebase';
+import Maps from './Maps';
 
 class Home extends Component {
   state = {
@@ -31,6 +50,7 @@ class Home extends Component {
           // An error happened.
         });
     }, 1000);
+    AsyncStorage.removeItem('user');
   };
   render() {
     return (
@@ -54,7 +74,24 @@ class Home extends Component {
             </Button>
           </Right>
         </Header>
-        <ListChat props={this.props} />
+        <Tabs>
+          <Tab
+            heading={
+              <TabHeading style={style.Tabst}>
+                <Icon name="ios-chatbubbles" />
+              </TabHeading>
+            }>
+            <ListChat props={this.props} />
+          </Tab>
+          <Tab
+            heading={
+              <TabHeading style={style.Tabst}>
+                <Icon name="ios-map" />
+              </TabHeading>
+            }>
+            <Maps />
+          </Tab>
+        </Tabs>
         <View style={{marginTop: 22}}>
           <Modal
             style={style.Modal}
@@ -85,6 +122,10 @@ class Home extends Component {
 }
 
 const style = StyleSheet.create({
+  Tabst: {
+    backgroundColor: '#05e3fc',
+    color: '#05e3fc',
+  },
   Modal: {
     alignContent: 'flex-end',
   },

@@ -10,9 +10,9 @@ import {
   StatusBar,
   TouchableHighlight,
   Image,
+  AsyncStorage,
 } from 'react-native';
 import {Button} from 'native-base';
-// import app from '../config/firebase';
 import firebase from 'firebase';
 import {StackActions} from '@react-navigation/native';
 
@@ -24,6 +24,7 @@ class Register extends Component {
       password: '',
       loading: 0,
       user: '',
+      warning: 0,
     };
   }
   login = (email, password) => {
@@ -32,11 +33,16 @@ class Register extends Component {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(user => {
+          AsyncStorage.setItem('user', user.user.email);
           this.props.navigation.dispatch(StackActions.replace('Home'));
           this.setState({loading: 0});
           this.clearForm();
         })
-        .catch(err => console.log(err));
+        // eslint-disable-next-line handle-callback-err
+        .catch(err => {
+          this.setState({loading: 0});
+          this.setState({warning: 1});
+        });
       this.setState({loading: 1});
     } else {
       Alert.alert('Form Empty !');
@@ -69,6 +75,14 @@ class Register extends Component {
         <Image style={style.ImageIcon} source={require('../asset/icon.png')} />
         <Text style={style.TitleLogin}>GoChat</Text>
         <View style={style.Content}>
+          <Text
+            style={{
+              fontStyle: 'italic',
+              color: 'red',
+              opacity: this.state.warning,
+            }}>
+            Email or Password incorrect
+          </Text>
           <View style={style.FormBox}>
             <TextInput
               value={this.state.email}
@@ -136,7 +150,7 @@ const style = StyleSheet.create({
     marginLeft: '40%',
   },
   TitleLogin: {
-    fontSize: 50,
+    fontSize: 30,
     top: 10,
     color: 'white',
     fontWeight: 'bold',
