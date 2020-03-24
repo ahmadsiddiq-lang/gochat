@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, AsyncStorage} from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {Spinner} from 'native-base';
 import '@react-native-community/geolocation';
 import app from '../config/firebase';
