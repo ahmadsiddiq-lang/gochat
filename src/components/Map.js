@@ -1,5 +1,14 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {View, StyleSheet, AsyncStorage, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  AsyncStorage,
+  Image,
+  Modal,
+  Text,
+  TouchableHighlight,
+} from 'react-native';
 import {
   Container,
   Header,
@@ -24,6 +33,7 @@ class Map extends Component {
       positionFriend: {},
       dataFriend: '',
       user: '',
+      modalVisible: false,
     };
   }
 
@@ -88,8 +98,23 @@ class Map extends Component {
       {timeout: 20000, maximumAge: 1000},
     );
   };
+  gotoChat = () => {
+    this.props.navigation.navigate('Chat');
+  };
+  gotoHome = () => {
+    this.props.navigation.navigate('Home');
+  };
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+  gotoProfile = data => {
+    this.setState({modalVisible: false});
+    this.props.navigation.navigate('Profile', data);
+  };
   componentDidMount() {
-    this.getCoordinate();
+    setTimeout(() => {
+      this.getCoordinate();
+    }, 1000);
     this.getPosition();
     this.dataFriend();
   }
@@ -103,14 +128,14 @@ class Map extends Component {
       <Container>
         <Header
           androidStatusBarColor={'#05e3fc'}
-          style={{backgroundColor: '#05e3fc', zIndex: 1}}>
+          style={{backgroundColor: '#05e3fc'}}>
           <Left>
-            <Button onPress={() => this.gotoHome()} transparent>
+            <Button onPress={() => this.gotoChat()} transparent>
               <Icon name="arrow-back" />
             </Button>
           </Left>
           <Body>
-            <Title>Map</Title>
+            <Title>Position</Title>
           </Body>
           <Right>
             <Button
@@ -123,7 +148,7 @@ class Map extends Component {
           </Right>
         </Header>
         <View style={styles.container}>
-          {data ? (
+          {data && dataMarker !== null ? (
             <MapView
               provider={PROVIDER_GOOGLE} // remove if not using Google Maps
               style={styles.map}
@@ -169,8 +194,34 @@ class Map extends Component {
               )}
             </MapView>
           ) : (
-            <Spinner />
+            <Spinner style={styles.loading} />
           )}
+        </View>
+        <View style={{marginTop: 22}}>
+          <Modal
+            style={styles.Modal}
+            animationType="fade"
+            transparent={true}
+            visible={this.state.modalVisible}>
+            <View style={styles.BoxModal}>
+              <View>
+                <Text
+                  onPress={() => this.gotoProfile(this.state.dataFriend)}
+                  style={styles.Text}>
+                  Profile
+                </Text>
+                <Text onPress={() => this.gotoHome()} style={styles.Text}>
+                  Home
+                </Text>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}>
+                  <Text style={styles.Text}>Cencel</Text>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </Modal>
         </View>
       </Container>
     );
@@ -196,6 +247,31 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 5,
     borderColor: '#A5EACF',
+  },
+  Modal: {
+    alignContent: 'flex-end',
+  },
+  BoxModal: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    position: 'absolute',
+    right: 5,
+    top: 5,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 10,
+  },
+  Text: {
+    padding: 5,
+  },
+  loading: {
+    bottom: '50%',
   },
 });
 
