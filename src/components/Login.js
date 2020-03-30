@@ -16,7 +16,7 @@ import {Button} from 'native-base';
 import firebase from 'firebase';
 import {StackActions} from '@react-navigation/native';
 
-class Register extends Component {
+class Login extends Component {
   constructor() {
     super();
     this.state = {
@@ -72,9 +72,12 @@ class Register extends Component {
           }}
         />
         <StatusBar backgroundColor="#05e3fc" barStyle="light-content" />
-        <Image style={style.ImageIcon} source={require('../asset/icon.png')} />
-        <Text style={style.TitleLogin}>GoChat</Text>
         <View style={style.Content}>
+          <Image
+            style={style.ImageIcon}
+            source={require('../asset/icon.png')}
+          />
+          <Text style={style.TitleLogin}>Go Chat</Text>
           <Text
             style={{
               fontStyle: 'italic',
@@ -105,10 +108,11 @@ class Register extends Component {
             style={style.ButtonRegister}>
             <Text style={style.TextRegister}>Login</Text>
           </Button>
+          <Text style={style.backtologin}>Don't have account ?</Text>
+          <TouchableHighlight onPress={() => this.gotoRegister()}>
+            <Text style={style.register}>Register</Text>
+          </TouchableHighlight>
         </View>
-        <TouchableHighlight onPress={() => this.gotoRegister()}>
-          <Text style={style.backtologin}>Register</Text>
-        </TouchableHighlight>
       </View>
     );
   }
@@ -119,17 +123,21 @@ const style = StyleSheet.create({
     backgroundColor: '#05e3fc',
     height: '100%',
     alignItems: 'center',
+    justifyContent: 'space-around',
   },
   Content: {
     width: '80%',
-    marginTop: '10%',
+    height: 400,
+    marginBottom: 70,
+    alignItems: 'center',
   },
   ImageIcon: {
-    top: '5%',
+    marginTop: 40,
     width: 150,
     height: 150,
   },
   Form: {
+    width: 280,
     borderColor: '#0a7500',
     borderWidth: 1,
     borderRadius: 5,
@@ -142,6 +150,7 @@ const style = StyleSheet.create({
   ButtonRegister: {
     marginTop: 15,
     backgroundColor: '#0a7500',
+    width: 280,
   },
   TextRegister: {
     color: 'white',
@@ -151,13 +160,17 @@ const style = StyleSheet.create({
   },
   TitleLogin: {
     fontSize: 30,
-    top: 10,
     color: 'white',
     fontWeight: 'bold',
+    marginTop: -20,
+    marginBottom: -20,
   },
   backtologin: {
-    marginTop: 40,
+    marginTop: 20,
+  },
+  register: {
+    color: 'blue',
   },
 });
 
-export default Register;
+export default Login;
